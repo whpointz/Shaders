@@ -78,15 +78,22 @@ Detail Mask：对第二道贴图的 mask
 
 ### 9 个 CG 头文件
 
-`UnityStandardBRDF.cginc` 用于存放标准着色器处理 BRDF 材质属性相关的函数与宏
-`UnityStandardConfig.cginc` 用于存放标准着色器配置相关的代码（其实里面就几个宏）
-`UnityStandardCore.cginc` 用于存放标准着色器的主要代码（如顶点着色函数、片段着色函数等相关函数）
-`Unity StandardCoreForward.cgnic`
-`Unity StandardCoreForwardSimple.cgnic`
-`UnityStandardInput.cginc` 用于存放标准着色器输入结构相关的工具函数与宏
-`UnityStandardMeta.cginc` 用于存放标准着色器 Meta 通道中会用到的工具函数与宏
-`UnityStandardShadow.cginc` 用于存放标准着色器阴影贴图采样相关的工具函数与宏
-`UnityStandardUtils.cginc` 用于存放标准着色器共用的一些工具函数
+`UnityStandardBRDF.cginc` 用于存放标准着色器处理 BRDF 材质属性相关的函数与宏。实现了 Unity 中基于物理的渲染技术，定义了 BRDF1_Unity_PBS、BRDF2_Unity_PBS 和 BRDF3_Unity_PBS 等函数，来实现不同平台下的 BRDF；
+
+`UnityStandardConfig.cginc` 用于存放标准着色器配置相关的代码（其实里面就几个宏）。对 Standard Shader 的相关配置，例如默认情况下关闭简化版的 PBS 实现（将 UNITY_STANDARD_SIMPLE 设为 0），以及使用基于归一化的 Blinn-Phong 模型而非 GGX 模型来实现 BRDF（将 UNITY_BRDF_GGX 设为 0）
+
+`UnityStandardCore.cginc` 用于存放标准着色器的主要代码（如顶点着色函数、片段着色函数等相关函数）。定义了 Standard 和 Standard(Specular setup) Shader 使用的顶点/片元着色器和相关的结构体、辅助函数等，如 vertForwardBase、fragForwardBase、MetallicSetup、SpecularSetup 函数和 VertexOutputForwardBase、FragmentCommonData 结构体；
+
+`UnityStandardCoreForward.cgnic`
+`UnityStandardCoreForwardSimple.cgnic`
+
+`UnityStandardInput.cginc` 用于存放标准着色器输入结构相关的工具函数与宏。声明了 Standard Shader 使用的相关输入，包括 Shader 使用的属性和顶点着色器的输入结构体 VertexInput，并定义了基于这些输入的辅助函数，如 TextCoords、Albedo、Occlusion、SpecularGloss 等函数；
+
+`UnityStandardMeta.cginc` 用于存放标准着色器 Meta 通道中会用到的工具函数与宏。定义了 Standard Shader 中 “LightMode” 为 “Meta” 的 Pass（用于提取光照纹理和全局光照的相关信息）使用的顶点/片元着色器，以及它们使用的输入/输出结构体；
+
+`UnityStandardShadow.cginc` 用于存放标准着色器阴影贴图采样相关的工具函数与宏。定义了 Standard Shader 中 “LightMode” 为 “ShadowCaster” 的 Pass（用于投射阴影）使用的顶点/片元着色器，以及它们使用的输入/输出结构体；
+
+`UnityStandardUtils.cginc` 用于存放标准着色器共用的一些工具函数。Standard Shader 使用的一些辅助函数，将来可能会移动到 UnityCG.cgnic 文件中；
 
 ![](http://wx1.sinaimg.cn/mw690/a53846c3gy1fexuoc5gy5j20gc09kjsx.jpg)
 
