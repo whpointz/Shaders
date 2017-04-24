@@ -1,5 +1,14 @@
 # 对 Unity 5 标准着色器 Standard Shader 的调研
 
+学习资料参考了：
+- 冯乐乐《Unity Shader 入门精要》348 ~ 356 页
+- <http://forum.china.unity3d.com/thread-897-1-1.html>
+- <https://yq.aliyun.com/articles/10736>
+- <http://blog.csdn.net/poem_qianmo/article/details/49556461>
+- <https://docs.unity3d.com/Manual/shader-StandardShader.html>
+
+学习笔记记于 2017-04-24
+
 ## 标准着色器的概念 # #
 
 Unity 5 里面采用了一套全新的 Shader 叫做标准着色器（Standard Shader），这套 Shader 使用了基于物理的光照计算，而老版本的那些 Shader 已经被 Unity 不推荐使用了，Unity 5 认为我们大多数情况下都应该使用 Standard Shader。
@@ -10,7 +19,7 @@ Unity 5 包含了若干的 Standard Shaders，它们共同组成了一个完整�
 
 物理渲染和光照计算的最大区别就是：当今流行的 lambert blinn phone 基本上是基于模拟的模型，就是尽可能的去模拟我们看上去的物体发射的颜色，用于欺骗我们的眼睛；而基于物理的光照计算则是依据了光线传播的物体特性，更加贴近于真实的光照情况，虽然在实现上用了一些近似计算；所以物理渲染在表现自然界的物体上尤其看上去更加真实。
 
-Unity 5 中目前有两个标准着色器，一个名为 Standard，我们称它为标准着色器的标准版，另一个名为 Standard（Specular Setup），我们称它为标准着色器的高光版，它们共同组成了一个完整的 PBS 光照明模型，且非常易于使用。其实这两个 Shader 基本差不多，只是有细微的属性参数上的区别。标准版这边的 `_Metallic`（金属性）、`_MetallicGlossMap`（金属光泽贴图），被高光版的 `_SpecColor`（高光颜色）、`_SpecGlossMap`（高光颜色法线贴图）所代替。
+Unity 5 中目前有两个标准着色器，一个名为 Standard，我们称它为标准着色器的标准版，另一个名为 Standard（Specular Setup），我们称它为标准着色器的高光版，它们共同组成了一个完整的 PBS 光照明模型，且非常易于使用。
 
 ![](http://wx2.sinaimg.cn/mw690/a53846c3gy1fexuo9qkv0j20fo074dh8.jpg)
 
@@ -24,6 +33,8 @@ Standard Shader 主要针对硬质表面（也就是建筑材质）而设计的�
 
 ![](http://wx3.sinaimg.cn/mw690/a53846c3gy1fexuoa6f4oj20em0tqacu.jpg) . ![](http://wx1.sinaimg.cn/mw690/a53846c3gy1fexuoatj20j20ei0tmdim.jpg)
 
+其实这两个 Shader 基本差不多，只是有细微的属性参数上的区别。标准版这边的 `_Metallic`（金属性）、`_MetallicGlossMap`（金属光泽贴图），被高光版的 `_SpecColor`（高光颜色）、`_SpecGlossMap`（高光颜色法线贴图）所代替。
+
 所有的纹理通道都是备选的，无需强制使用，任何一个闲置通道的相关代码都会在编译时被优化掉，因此完全不用担心效率方面的问题。Unity 会根据我们输入到编辑器中的数据来生成正确的代码，并使整个过程保持高效。
 
 ## 标准着色器的参数 # #
@@ -32,7 +43,7 @@ Albedo：物体表面的基本颜色，在物理模型中相当于物体表面�
 
 Metallic：相当于物理模型中的 F(0)，即物体表面和视线一致的面的对光线反射的能量，通常金属物体通常超过 50%，大部分在 90%，而非金属集中在 20% 以下，自然界中的物质很少有在 20% - 40% 之间的（除非一些人造物体），正因为如此这个属性被形象的称谓 Metallic（金属感）
 
-Smoonthness：相当于物理模型中与实现一致的面占所有微面的比例，比例越大，物体越光滑，反之越毛糙，要区分好这个和 Metallic 的区别（ Metallic 在描述对反射能量的强弱，Smoonthness 描述表面的光滑程度），当然大所属情况下金属的 Smoonthness 都很高。
+Smoonthness：相当于物理模型中与实现一致的面占所有微面的比例，比例越大，物体越光滑，反之越毛糙，要区分好这个和 Metallic 的区别（ Metallic 在描述对反射能量的强弱，Smoonthness 描述表面的光滑程度），当然大多数情况下金属的 Smoonthness 都很高。
 
 Normal Map：法线贴图
 
@@ -67,13 +78,13 @@ Detail Mask：对第二道贴图的 mask
 
 ### 9 个 CG 头文件
 
-`UnityStandardBRDF.cginc` 用于存放标准着色器处理BRDF材质属性相关的函数与宏
+`UnityStandardBRDF.cginc` 用于存放标准着色器处理 BRDF 材质属性相关的函数与宏
 `UnityStandardConfig.cginc` 用于存放标准着色器配置相关的代码（其实里面就几个宏）
 `UnityStandardCore.cginc` 用于存放标准着色器的主要代码（如顶点着色函数、片段着色函数等相关函数）
 `Unity StandardCoreForward.cgnic`
 `Unity StandardCoreForwardSimple.cgnic`
 `UnityStandardInput.cginc` 用于存放标准着色器输入结构相关的工具函数与宏
-`UnityStandardMeta.cginc` 用于存放标准着色器meta通道中会用到的工具函数与宏
+`UnityStandardMeta.cginc` 用于存放标准着色器 Meta 通道中会用到的工具函数与宏
 `UnityStandardShadow.cginc` 用于存放标准着色器阴影贴图采样相关的工具函数与宏
 `UnityStandardUtils.cginc` 用于存放标准着色器共用的一些工具函数
 
@@ -97,13 +108,6 @@ CustomEditor "StandardShaderGUI"
 ```
 
 End.
-
-学习资料参考：
-
-<http://forum.china.unity3d.com/thread-897-1-1.html>
-<https://yq.aliyun.com/articles/10736>
-<http://blog.csdn.net/poem_qianmo/article/details/49556461>
-<https://docs.unity3d.com/Manual/shader-StandardShader.html>
 
 PS：关于 PBS 技术，知乎上有一个专栏，专门介绍 PBS 技术的一些相关原理:
 
